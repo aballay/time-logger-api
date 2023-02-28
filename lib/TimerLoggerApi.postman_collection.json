@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "108b029a-cafc-4b93-8ab7-d6d90797bdb4",
+		"name": "TimerLoggerApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AñadirTarea",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Id\":10,\r\n  \"Name\": \"Hola\",\r\n  \"TimeLogHistory\": [\r\n    {\r\n      \"Date\": \"2023-02-25\",\r\n      \"TimeLog\": {\r\n          \"Minutes\":25,\r\n          \"Seconds\": 0,\r\n          \"Hours\" : 3\r\n      },\r\n      \"Description\" : \"Desarrollo de la consola 413\"\r\n    },\r\n    {\r\n      \"Date\": \"2023-02-26\",\r\n      \"TimeLog\": {\r\n          \"Minutes\":0,\r\n          \"Seconds\": 0,\r\n          \"Hours\" : 2\r\n      },\r\n      \"Description\" : \"Desarrollo de la consola 413\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3200/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarTarea",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3200/tasks/50",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"tasks",
+						"50"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObtenerTarea",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3200/tasks/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"tasks",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObtenerHorasDelDia",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3200/tasks/time/10/2023-02-24",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"tasks",
+						"time",
+						"10",
+						"2023-02-24"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObtenerTodasTareas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3200/tasks/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AñadirHorasTarea",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 1,\r\n  \"data\": \r\n    {\r\n      \"Date\": \"2020-01-31\",\r\n      \"TimeLog\": {\r\n        \"Hours\": 2,\r\n        \"Minutes\": 2,\r\n        \"Seconds\": 2\r\n      },\r\n      \"Description\": \"Cumpleaños ovlidado\"\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3200/tasks/addlog",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3200",
+					"path": [
+						"tasks",
+						"addlog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AgregarRegistroAHistorial",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
