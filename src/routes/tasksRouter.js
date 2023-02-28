@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const Task = require("../models/task");
+const TaskModel = require("../models/tasksScheme");
 
 // Añadir una tarea
 router.post("/", async (req, res) => {
   try {
-    const task = new Task(req.body);
+    const task = new TaskModel(req.body);
     await task.save();
     res.status(201).json({
       status: 201,
@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
 //Obtiene todas las tareas
 router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find({});
+    const tasks = await TaskModel.find({});
     res.status(200).send({
       Status: 200,
       Message: "Operación realizada con éxito",
@@ -46,7 +46,7 @@ router.get("/", async (req, res) => {
 // Eliminar una tarea.
 router.delete("/:id", async (req, res) => {
   try {
-    const task = await Task.findOneAndRemove({ Id: req.params.id });
+    const task = await TaskModel.findOneAndRemove({ Id: req.params.id });
     if (!task) {
       res.status(404).json({
         status: 404,
@@ -70,7 +70,7 @@ router.delete("/:id", async (req, res) => {
 //Obtener una tarea con id especifico
 router.get("/:id", async (req, res) => {
   try {
-    const task = await Task.findOne({ Id: req.params.id }, "-__v");
+    const task = await TaskModel.findOne({ Id: req.params.id }, "-__v");
     if (!task) return res.status(400).send({ status: 400, message: "No se encontró la tarea solicitada" });
     res.send({ status: 200, message: "Operación realizada con éxito", task });
   } catch (error) {
@@ -107,7 +107,7 @@ router.get("/time/:id/:date", async (req, res) => {
   try {
     const id = req.params.id;
     const date = req.params.date
-    const tasks = await Task.find({
+    const tasks = await TaskModel.find({
       Id: id,
       "TimeLogHistory.Date": date
     }, "-__v");
@@ -150,7 +150,7 @@ router.patch("/addlog", async (req, res) => {
       })
     }
     
-    const task = await Task.findOne({ Id: id });
+    const task = await TaskModel.findOne({ Id: id });
     console.log(task)
     if (!task) {
       return res.status(404).send({

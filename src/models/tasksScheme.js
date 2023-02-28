@@ -32,6 +32,6 @@ const taskSchema = new mongoose.Schema({
   TimeLogHistory: [timeLogSchema]
 });
 
-const Task = mongoose.model("Tasks", taskSchema);
+const TaskModel = mongoose.model("Tasks", taskSchema);
 
-module.exports = Task;
+module.exports = TaskModel;
