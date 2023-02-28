@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const TaskModel = require("../models/schemas/tasksSchema");
+const TaskController = require("../controllers/taskController");
 const responses = require("../models/responses/responses");
 
 const _getBadRequest = (res, errorMessage) => {
@@ -15,20 +16,35 @@ const _getNotFoundRequest = (res, errorMessage) => {
   res.status(404).json(responses.errorResponse(errorMessage, 404));
 }
 
+const _getOkRequest = (res,data) => {
+  if(!data){
+    return  res.status(200).json(responses.okResponse());
+  }
+  res.status(200).json(_addDataToResponse(responses.okResponse(),data))
+}
+
+const _getCreatedOkRequest = (res) => {
+  res.status(201).json(responses.createdOkResponse())
+}
+
+const _addDataToResponse  = (response,data) => {
+    return {...response,...data}
+}
+
+
 
 // Añadir una tarea
 router.post("/", async (req, res) => {
   try {
-    const task = new TaskModel(req.body);
-    await task.save();
-    res.status(201).json({
-      status: 201,
-      message: "Operación realizada con éxito"
-    });
+
+    await TaskController.AddTask(req.body);
+    _getCreatedOkRequest(res);
+
   } catch (error) {
     if (error.name === "MongoError" && error.code === 11000) {
       _getBadRequest(res, "Ya existe una tarea con ese Id");
     } else {
+
       _getBadRequest(res, error.message);
     }
   }
@@ -37,12 +53,8 @@ router.post("/", async (req, res) => {
 //Obtiene todas las tareas
 router.get("/", async (req, res) => {
   try {
-    const tasks = await TaskModel.find({});
-    res.status(200).send({
-      Status: 200,
-      Message: "Operación realizada con éxito",
-      Tasks: tasks
-    });
+    
+    _getOkRequest(res,{Tasks:await TaskController.GetTasks()})
   } catch (error) {
     _getBadRequest(res, error)
   }
@@ -51,28 +63,28 @@ router.get("/", async (req, res) => {
 // Eliminar una tarea.
 router.delete("/:id", async (req, res) => {
   try {
-    const task = await TaskModel.findOneAndRemove({ Id: req.params.id });
+    const task = await TaskController.DeleteTask(req.params.id);
     if (!task) {
       _getNotFoundRequest(res,`No se encontró una tarea con el Id : ${req.params.id}`)
     } else {
-      res.status(200).json({
-        status: 200,
-        message: "Operación realizada con éxito"
-      });
+      _getOkRequest(res);
     }
   } catch (error) {
-    _getBadRequest(res, errorMessage);
+    _getBadRequest(res, error);
   }
 });
 
 //Obtener una tarea con id especifico
 router.get("/:id", async (req, res) => {
   try {
-    const task = await TaskModel.findOne({ Id: req.params.id }, "-__v");
+    const task = await TaskController.GetTask(req.params.id);
+    
     if (!task) return _getBadRequest(res,"No se encontró la tarea solicitada");
-    res.send({ status: 200, message: "Operación realizada con éxito", task });
+
+    _getOkRequest(res,{task:task});
+   
   } catch (error) {
-    _getInternalError(error.message)
+    _getInternalError(res,error.message)
   }
 });
 
@@ -99,31 +111,34 @@ function sumTime(timeLogHistory) {
 
 router.get("/time/:id/:date", async (req, res) => {
   try {
-    console.log("STEP 0 ")
-    const id = req.params.id;
-    const date = req.params.date
+    const {id,date} = req.params;
    
     const task = await TaskModel.findOne({Id: id});
+
+
     if(!task){
       return _getNotFoundRequest(res,`No se encontro la tarea con Id : ${id}`)
     }
+
 
     const tasks = await TaskModel.find({
       Id: id,
       "TimeLogHistory.Date": date
     }, "-__v");
 
+
+
     if (tasks.length === 0) {
       return _getNotFoundRequest(res,`No se encontraron tareas para el día especificado : ${date}`)
     }
+
+
     const timeLogToday = tasks[0].TimeLogHistory.filter(item => item.Date === date);
 
     const time = sumTime(timeLogToday);
-    res.status(200).send({
-      Status: 200,
-      Message: "Operación realizada con éxito",
-      Time: time
-    });
+    
+    _getOkRequest(res,{Time:time});
+
   } catch (error) {
     _getBadRequest(res,error);
   }
@@ -138,15 +153,18 @@ router.patch("/addlog", async (req, res) => {
     }
 
     const task = await TaskModel.findOne({ Id: id });
+
+
     if (!task) {
       return _getNotFoundRequest(res,"No se encontró la tarea especificada")
     }
+
     task.TimeLogHistory.push({ Date: Date, TimeLog: TimeLog, Description: Description });
+
     await task.save();
-    res.status(200).send({
-      Status: 200,
-      Message: "Operación realizada con éxito"
-    });
+  
+    _getOkRequest(res);
+
   } catch (error) {
     _getBadRequest(res,"error");
   }

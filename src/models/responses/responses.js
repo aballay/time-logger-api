@@ -1,16 +1,21 @@
+const _response = (status,msg) => 
+ {
+  return {
+    status : status,
+    message : msg
+  } 
+}
+
 const responses = {
     errorResponse: (msg,status) => {
-      return {
-        status: status ? status : 400,
-        message: `Error al realizar la operación: ${msg}`
-      };
+        return _response(status ? status : 400,`Error al realizar la operación: ${msg}`)
     },
-    okResponse: (msg) => {
-      return {
-        status: 200,
-        message: "Operación realizada con éxito",
-      };
+    okResponse: (status) => {
+        return _response(status ? status : 200,"Operación realizada con éxito");
     },
-  };
+    createdOkResponse: () => {
+        return _response(201,"Operación realizada con éxito");
+  }
+}
   
   module.exports = responses;
